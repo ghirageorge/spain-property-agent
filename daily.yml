@@ -36,7 +36,7 @@ jobs:
           GMAIL_CLIENT_ID:      ${{ secrets.GMAIL_CLIENT_ID }}
           GMAIL_CLIENT_SECRET:  ${{ secrets.GMAIL_CLIENT_SECRET }}
           GMAIL_REFRESH_TOKEN:  ${{ secrets.GMAIL_REFRESH_TOKEN }}
-          MY_EMAIL:             ${{ secrets.MY_EMAIL }}
+          MY_EMAILS:            ${{ secrets.MY_EMAILS }}
         run: python agent.py
 
       # Salveaza seen_urls.json intre rulari (evita duplicate)

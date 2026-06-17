@@ -32,8 +32,11 @@ from criteria import build_prompt, BUDGET, SCORING
 # CONFIGURARE
 # ============================================================
 
-# Adresa ta de email (de la care primesti alerte SI unde trimiti digestul)
-MY_EMAIL = os.environ.get("MY_EMAIL", "george.ghira@bertelsmann.de")
+# Adrese de email care primesc digestul zilnic.
+# Seteaza MY_EMAILS in GitHub Secrets cu adresele separate prin virgula:
+# ex: "george.ghira@bertelsmann.de,altaadresa@gmail.com"
+MY_EMAILS = os.environ.get("MY_EMAILS", "george.ghira@bertelsmann.de")
+RECIPIENT_LIST = [e.strip() for e in MY_EMAILS.split(",") if e.strip()]
 
 # Expeditorii de alerte imobiliare — filtram emailurile de la acestia
 ALERT_SENDERS = [
@@ -150,7 +153,7 @@ def gmail_send(access_token: str, to: str, subject: str, html_body: str):
     """Trimite un email HTML prin Gmail API."""
     msg = MIMEMultipart("alternative")
     msg["To"]      = to
-    msg["From"]    = MY_EMAIL
+    msg["From"]    = RECIPIENT_LIST[0]
     msg["Subject"] = subject
     msg.attach(MIMEText(html_body, "html", "utf-8"))
 
@@ -650,11 +653,20 @@ def run():
         f"({sum(1 for e in evaluations if e.get('category')=='top')} de urmarit)"
     )
 
-    try:
-        gmail_send(token, MY_EMAIL, subject, html_body)
-        log.info("=== Digest trimis cu succes! ===")
-    except Exception as e:
-        log.error("Eroare la trimiterea emailului: %s", e)
+    sent, failed = 0, 0
+    for recipient in RECIPIENT_LIST:
+        try:
+            gmail_send(token, recipient, subject, html_body)
+            log.info("Digest trimis catre %s", recipient)
+            sent += 1
+        except Exception as e:
+            log.error("Eroare la trimiterea catre %s: %s", recipient, e)
+            failed += 1
+
+    if sent:
+        log.info("=== Digest trimis cu succes catre %d destinatar(i)! ===", sent)
+    if failed:
+        log.warning("Eroare la %d destinatar(i).", failed)
 
 
 # ============================================================
