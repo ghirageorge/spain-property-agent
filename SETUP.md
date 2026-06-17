@@ -89,7 +89,7 @@ GitHub → repository → Settings → Secrets and variables → Actions → New
 | `GMAIL_CLIENT_ID`    | ...apps.googleusercontent.com |
 | `GMAIL_CLIENT_SECRET`| GOCSPX-...                   |
 | `GMAIL_REFRESH_TOKEN`| 1//...                        |
-| `MY_EMAIL`           | george.ghira@bertelsmann.de   |
+| `MY_EMAILS`           | george.ghira@bertelsmann.de   |
 
 ---
 
