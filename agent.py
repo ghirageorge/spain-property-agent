@@ -40,11 +40,12 @@ RECIPIENT_LIST = [e.strip() for e in MY_EMAILS.split(",") if e.strip()]
 
 # Expeditorii de alerte imobiliare — filtram emailurile de la acestia
 ALERT_SENDERS = [
-    "noreply@idealista.com",
+    "noresponder@idealista.com",
     "alertas@idealista.com",
     "noreply@habitaclia.com",
-    "alertes@habitaclia.com",
-    "no-reply@habitaclia.com",
+    "alertas@email.habitaclia.com",
+    "novedades.fotocasa@novedades.fotocasa.es",
+    "enviosfotocasa@fotocasa.es",
 ]
 
 # Claude API
