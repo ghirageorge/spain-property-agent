@@ -1,0 +1,49 @@
+# ============================================================
+# GitHub Actions — rulare automata zilnica la 07:00 UTC (08:00 Brasov)
+# Fisier: .github/workflows/daily.yml
+# ============================================================
+
+name: Agent Imobiliar Zilnic
+
+on:
+  schedule:
+    # Rulare la 07:00 UTC = 08:00 ora Romaniei (EEST vara)
+    - cron: "0 7 * * *"
+
+  # Permite rulare manuala din interfata GitHub
+  workflow_dispatch:
+
+jobs:
+  run-agent:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout cod
+        uses: actions/checkout@v4
+
+      - name: Instaleaza Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Instaleaza dependente
+        run: pip install requests beautifulsoup4
+
+      - name: Ruleaza agentul
+        env:
+          # Acestea se seteaza in GitHub → Settings → Secrets → Actions
+          ANTHROPIC_API_KEY:    ${{ secrets.ANTHROPIC_API_KEY }}
+          GMAIL_CLIENT_ID:      ${{ secrets.GMAIL_CLIENT_ID }}
+          GMAIL_CLIENT_SECRET:  ${{ secrets.GMAIL_CLIENT_SECRET }}
+          GMAIL_REFRESH_TOKEN:  ${{ secrets.GMAIL_REFRESH_TOKEN }}
+          MY_EMAIL:             ${{ secrets.MY_EMAIL }}
+        run: python agent.py
+
+      # Salveaza seen_urls.json intre rulari (evita duplicate)
+      - name: Salveaza URL-uri vazute
+        uses: actions/cache@v4
+        with:
+          path: seen_urls.json
+          key: seen-urls-${{ github.run_id }}
+          restore-keys: |
+            seen-urls-
